@@ -24,34 +24,39 @@ public class MovieServiceImp implements MovieServiceInterface {
 
 
     @Override
-    public Movie getMovie(Long id) {
-         Optional<Movie> mo = movieRepo.findById(id);
-         return mo.orElseGet(Movie::new);
+    public MovieDto getMovie(Long id) {
+         Movie mo = movieRepo.findById(id).get();
+         MovieDto movieDto = convertEntityToDto(mo);
+         return movieDto;
     }
 
     @Override
-    public List<Movie> getMovies() {
-        return movieRepo.findAll();
+    public List<MovieDto> getMovies() {
+        List<Movie> movies = movieRepo.findAll();
+        return movies.stream().map(movie -> convertEntityToDto(movie)).toList();
     }
 
     @Override
-    public Movie addMovie(MovieDto movieDto) {
-        Movie movie = modelMapper.map(movieDto, Movie.class);
-
-        return movieRepo.save(movie);
+    public MovieDto addMovie(MovieDto movieDto) {
+        Movie movie = convertDtoToEntity(movieDto);
+        Movie savedMovie = movieRepo.save(movie);
+        return convertEntityToDto(savedMovie);
     }
 
     @Override
-    public Movie updateMovie(Long id, Movie movie) {
-        Movie existingMovie = movieRepo.findById(id).get();
-        if(movie.getName()!=null)
-            existingMovie.setName(movie.getName());
-        if(movie.getGenre()!=null)
-            existingMovie.setGenre(movie.getGenre());
-        if(movie.getDirector()!=null)
-            existingMovie.setDirector(movie.getDirector());
-        return existingMovie;
-
+    public MovieDto updateMovie(Long id, MovieDto movieDto) {
+        Movie currentMovie = movieRepo.findById(id).get();
+        if(movieDto.getName() != null){
+            currentMovie.setName(movieDto.getName());
+        }
+        if (movieDto.getGenre() != null){
+            currentMovie.setGenre(movieDto.getGenre());
+        }
+        if(movieDto.getDirector()!= null){
+            currentMovie.setDirector(movieDto.getDirector());
+        }
+        MovieDto updatedMovie = convertEntityToDto(currentMovie);
+        return updatedMovie;
     }
 
     @Override
@@ -60,7 +65,18 @@ public class MovieServiceImp implements MovieServiceInterface {
     }
 
     @Override
-    public List<Movie> getMoviesByGenre(String genre) {
-        return movieRepo.findByGenre(genre);
+    public List<MovieDto> getMoviesByGenre(String genre) {
+        List<Movie> movies = movieRepo.findByGenre(genre);
+        return movies.stream().map(movie -> convertEntityToDto(movie)).toList();
+    }
+
+    private Movie convertDtoToEntity(MovieDto movieDto){
+        Movie movie = modelMapper.map(movieDto, Movie.class);
+        return movie;
+    }
+
+    private MovieDto convertEntityToDto(Movie movie){
+        MovieDto movieDto = modelMapper.map(movie, MovieDto.class);
+        return movieDto;
     }
 }

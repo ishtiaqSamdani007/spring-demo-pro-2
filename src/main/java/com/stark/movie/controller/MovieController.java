@@ -21,23 +21,23 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
-    public Movie getMovie(@PathVariable Long id){
+    public MovieDto getMovie(@PathVariable Long id){
         return movieService.getMovie(id);
     }
 
     @GetMapping
-    public List<Movie> getMovies(){
+    public List<MovieDto> getMovies(){
         return movieService.getMovies();
     }
 
     @PostMapping
-    public Movie addMovie(@RequestBody MovieDto movieDto){
+    public MovieDto addMovie(@RequestBody MovieDto movieDto){
         return movieService.addMovie(movieDto);
     }
 
     @PatchMapping("/{id}")
-    public Movie updateMovie(@PathVariable Long id, @RequestBody Movie movie){
-        return movieService.updateMovie(id, movie);
+    public MovieDto updateMovie(@PathVariable Long id, @RequestBody MovieDto movieDto){
+        return movieService.updateMovie(id, movieDto);
     }
 
     @DeleteMapping("/{id}")
@@ -46,7 +46,7 @@ public class MovieController {
     }
 
     @GetMapping("/genre/{genre}")
-    public List<Movie> getMoviesByGenre(@PathVariable String genre){
+    public List<MovieDto> getMoviesByGenre(@PathVariable String genre){
         return movieService.getMoviesByGenre(genre);
     }
 }
